@@ -15,13 +15,13 @@ products-get:
 	curl -sX GET http://localhost:3000/api/products | jq .
 
 # カート
-# GET /api/cart - 現在のカートの内容を取得（商品リスト、小計、送料、税額、合計金額を含む）
-cart-get:
-	curl -sX GET http://localhost:3000/api/cart | jq .
+# GET /api/carts - 現在のカートの内容を取得（商品リスト、小計、送料、税額、合計金額を含む）
+carts-get:
+	curl -sX GET http://localhost:3000/api/carts | jq .
 
-# POST /api/cart - カートに商品を追加（商品ID、名前、価格、数量を指定）
-cart-post:
-	curl -sX POST -H "Content-Type: application/json" -d '{"productId": 3, "name": "スマートウォッチ", "price": 29800, "quantity": 1}' http://localhost:3000/api/cart | jq .
+# POST /api/carts - カートに商品を追加（商品ID、名前、価格、数量を指定）
+carts-post:
+	curl -sX POST -H "Content-Type: application/json" -d '{"productId": 3, "name": "スマートウォッチ", "price": 29800, "quantity": 1}' http://localhost:3000/api/carts | jq .
 
 # 注文
 # GET /api/orders - 注文履歴を取得（注文ID、日付、ステータス、商品リスト、合計金額、配送先情報を含む）
