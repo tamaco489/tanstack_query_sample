@@ -8,7 +8,7 @@ const products = [
     description: "最新の高性能スマートフォン",
     stock: 50,
     category: "electronics",
-    image: "https://example.com/phone.jpg"
+    image: "/images/Gemini_Generated_Image_7bfn17bfn17bfn17.png"
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const products = [
     description: "ノイズキャンセリング機能付き",
     stock: 100,
     category: "electronics",
-    image: "https://example.com/earphones.jpg"
+    image: "/images/Gemini_Generated_Image_5tyqmm5tyqmm5tyq.png"
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const products = [
     description: "健康管理機能付き",
     stock: 30,
     category: "electronics",
-    image: "https://example.com/watch.jpg"
+    image: "/images/Gemini_Generated_Image_gbrsk2gbrsk2gbrs.png"
   }
 ];
 
