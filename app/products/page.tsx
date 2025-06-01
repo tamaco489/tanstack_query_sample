@@ -26,7 +26,7 @@ export default function ProductsPage() {
     queryFn: fetchProducts,
   });
 
-  const { cart, addToCart, updateQuantity } = useCart();
+  const { cart, addToCart } = useCart();
   const [quantities, setQuantities] = useState<Record<number, number>>({});
 
   if (isLoading) {
