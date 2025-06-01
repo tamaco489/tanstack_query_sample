@@ -1,121 +1,76 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Order, OrderResponse } from '@/app/types/order';
+import { CartItem } from '@/app/types/cart';
 
-interface OrderItem {
-  productId: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-interface ShippingAddress {
-  name: string;
-  postalCode: string;
-  address: string;
-}
-
-interface Order {
-  id: string;
-  date: string;
-  status: string;
-  items: OrderItem[];
-  total: number;
-  shippingAddress: ShippingAddress;
+async function fetchOrders(): Promise<Order[]> {
+  const response = await fetch('/api/orders');
+  const data: OrderResponse = await response.json();
+  return data.orders;
 }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: orders, isLoading, error } = useQuery({
+    queryKey: ['orders'],
+    queryFn: fetchOrders,
+  });
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch('/api/orders');
-        const data = await response.json();
-        setOrders(data.orders);
-      } catch (error) {
-        console.error('注文履歴の取得に失敗しました:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="p-4">読み込み中...</div>;
   }
 
-  const getStatusColor = (status: string) => {
+  if (error) {
+    return <div className="p-4 text-red-500">エラーが発生しました</div>;
+  }
+
+  const getStatusColor = (status: Order['status']) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'shipped':
-        return 'bg-blue-100 text-blue-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
+      case 'processing':
+        return 'bg-blue-100 text-blue-800';
+      case 'shipped':
+        return 'bg-purple-100 text-purple-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return '完了';
-      case 'shipped':
-        return '発送済み';
-      case 'pending':
-        return '処理中';
-      default:
-        return status;
     }
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">注文履歴</h1>
-
-      <div className="space-y-6">
-        {orders.map((order) => (
+      <div className="grid grid-cols-1 gap-4">
+        {orders?.map((order: Order) => (
           <div key={order.id} className="border rounded-lg p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-lg font-semibold">注文番号: {order.id}</h2>
-                <p className="text-gray-600">
-                  注文日: {new Date(order.date).toLocaleDateString('ja-JP')}
-                </p>
+                <h2 className="text-xl font-semibold">注文番号: {order.id}</h2>
+                <p className="text-gray-600">注文日時: {new Date(order.createdAt).toLocaleString()}</p>
               </div>
               <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(order.status)}`}>
-                {getStatusText(order.status)}
+                {order.status}
               </span>
             </div>
-
-            <div className="mb-4">
-              <h3 className="font-semibold mb-2">商品</h3>
-              <div className="space-y-2">
-                {order.items.map((item) => (
-                  <div key={item.productId} className="flex justify-between">
-                    <span>{item.name} × {item.quantity}</span>
-                    <span>¥{item.price.toLocaleString()}</span>
+            <div className="space-y-2">
+              {order.items.map((item: CartItem) => (
+                <div key={item.productId} className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">数量: {item.quantity}</p>
                   </div>
-                ))}
-              </div>
+                  <p className="font-medium">¥{item.price.toLocaleString()}</p>
+                </div>
+              ))}
             </div>
-
-            <div className="mb-4">
-              <h3 className="font-semibold mb-2">配送先</h3>
-              <p>{order.shippingAddress.name}</p>
-              <p>〒{order.shippingAddress.postalCode}</p>
-              <p>{order.shippingAddress.address}</p>
-            </div>
-
-            <div className="border-t pt-4">
-              <div className="flex justify-between font-bold">
-                <span>合計金額</span>
-                <span>¥{order.total.toLocaleString()}</span>
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="font-bold">合計</span>
+                <span className="text-xl font-bold">¥{order.total.toLocaleString()}</span>
               </div>
             </div>
           </div>

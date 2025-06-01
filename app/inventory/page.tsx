@@ -1,38 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { InventoryItem, InventoryResponse } from '@/app/types/inventory';
 
-interface InventoryItem {
-  productId: number;
-  name: string;
-  currentStock: number;
-  reservedStock: number;
-  availableStock: number;
-  lastUpdated: string;
+async function fetchInventory(): Promise<InventoryItem[]> {
+  const response = await fetch('/api/inventory');
+  const data: InventoryResponse = await response.json();
+  return data.items;
 }
 
 export default function InventoryPage() {
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: inventory, isLoading, error } = useQuery({
+    queryKey: ['inventory'],
+    queryFn: fetchInventory,
+  });
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await fetch('/api/inventory');
-        const data = await response.json();
-        setInventory(data.inventory);
-      } catch (error) {
-        console.error('在庫情報の取得に失敗しました:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInventory();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="p-4">読み込み中...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">エラーが発生しました</div>;
   }
 
   const getStockStatus = (availableStock: number) => {
@@ -73,7 +61,7 @@ export default function InventoryPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {inventory.map((item) => (
+            {inventory?.map((item: InventoryItem) => (
               <tr key={item.productId}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{item.name}</div>

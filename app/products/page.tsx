@@ -3,20 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCart } from '@/app/hooks/useCart';
 import { useState } from 'react';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  stock: number;
-  category: string;
-  image: string;
-}
+import { Product, ProductResponse } from '@/app/types/product';
 
 async function fetchProducts(): Promise<Product[]> {
   const response = await fetch('/api/products');
-  const data = await response.json();
+  const data: ProductResponse = await response.json();
   return data.products;
 }
 
