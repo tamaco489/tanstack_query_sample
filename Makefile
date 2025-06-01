@@ -1,6 +1,6 @@
 .PHONY: mock-get-request mock-post-request \
-        products-get cart-get cart-post \
-        orders-get orders-post inventory-get inventory-patch
+        products-get orders-get orders-post \
+				inventory-get inventory-patch
 
 # 基本的なモックAPIのテスト
 mock-get-request:
@@ -13,15 +13,6 @@ mock-post-request:
 # GET /api/products - 商品一覧を取得（商品ID、名前、価格、在庫数などを含む）
 products-get:
 	curl -sX GET http://localhost:3000/api/products | jq .
-
-# カート
-# GET /api/carts - 現在のカートの内容を取得（商品リスト、小計、送料、税額、合計金額を含む）
-carts-get:
-	curl -sX GET http://localhost:3000/api/carts | jq .
-
-# POST /api/carts - カートに商品を追加（商品ID、名前、価格、数量を指定）
-carts-post:
-	curl -sX POST -H "Content-Type: application/json" -d '{"productId": 3, "name": "スマートウォッチ", "price": 29800, "quantity": 1}' http://localhost:3000/api/carts | jq .
 
 # 注文
 # GET /api/orders - 注文履歴を取得（注文ID、日付、ステータス、商品リスト、合計金額、配送先情報を含む）
