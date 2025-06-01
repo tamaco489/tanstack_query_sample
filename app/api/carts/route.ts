@@ -42,4 +42,24 @@ export async function POST(request: Request) {
     },
     timestamp: new Date().toISOString()
   });
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const productId = searchParams.get('productId');
+
+  if (!productId) {
+    return NextResponse.json(
+      { error: '商品IDが指定されていません' },
+      { status: 400 }
+    );
+  }
+
+  const updatedItems = cart.items.filter(item => item.productId !== Number(productId));
+  cart.items = updatedItems;
+  cart.subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  cart.tax = Math.floor(updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 0.1);
+  cart.total = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + cart.shipping + Math.floor(updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 0.1);
+
+  return new NextResponse(null, { status: 204 });
 } 
