@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CartItem {
   productId: number;
@@ -19,28 +19,40 @@ interface Cart {
   total: number;
 }
 
+async function fetchCart(): Promise<Cart> {
+  const response = await fetch('/api/carts');
+  const data = await response.json();
+  return data.cart;
+}
+
+async function removeFromCart(productId: number): Promise<Cart> {
+  const response = await fetch(`/api/carts?productId=${productId}`, {
+    method: 'DELETE',
+  });
+  const data = await response.json();
+  return data.cart;
+}
+
 export default function CartPage() {
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: cart, isLoading, error } = useQuery({
+    queryKey: ['cart'],
+    queryFn: fetchCart,
+  });
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await fetch('/api/carts');
-        const data = await response.json();
-        setCart(data.cart);
-      } catch (error) {
-        console.error('カートの取得に失敗しました:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const removeMutation = useMutation({
+    mutationFn: removeFromCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
 
-    fetchCart();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="p-4">読み込み中...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">エラーが発生しました</div>;
   }
 
   if (!cart) {
@@ -69,11 +81,10 @@ export default function CartPage() {
               </div>
               <button
                 className="text-red-500 hover:text-red-700"
-                onClick={() => {
-                  // 商品を削除する処理を実装
-                }}
+                onClick={() => removeMutation.mutate(item.productId)}
+                disabled={removeMutation.isPending}
               >
-                削除
+                {removeMutation.isPending ? '削除中...' : '削除'}
               </button>
             </div>
           ))}
