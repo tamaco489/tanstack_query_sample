@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useCart } from '../hooks/useCart';
+import { useCart } from '@/app/hooks/useCart';
 import { useState } from 'react';
 
 interface Product {
@@ -118,4 +118,4 @@ export default function ProductsPage() {
       </div>
     </div>
   );
-} 
+};

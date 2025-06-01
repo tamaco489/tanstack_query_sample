@@ -1,6 +1,6 @@
 'use client';
 
-import { useCart } from '../hooks/useCart';
+import { useCart } from '@/app/hooks/useCart';
 
 export default function CartPage() {
   const { cart, isLoading, error, removeFromCart } = useCart();
