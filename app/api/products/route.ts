@@ -37,4 +37,4 @@ export async function GET(): Promise<NextResponse<ProductResponse>> {
     total: products.length,
     timestamp: new Date().toISOString()
   });
-} 
+};

@@ -2,11 +2,21 @@
 
 import { useCart } from '@/app/hooks/useCart';
 import { CartItem } from '@/app/types/cart';
+import { useEffect, useState } from 'react';
 
 export default function CartPage() {
   const { cart, removeFromCart } = useCart();
+  const [isClient, setIsClient] = useState(false);
 
-  if (!cart) {
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  if (!cart || cart.items.length === 0) {
     return <div className="p-4">カートは空です</div>;
   }
 
