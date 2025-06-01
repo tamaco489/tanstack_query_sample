@@ -1,47 +1,44 @@
 import { NextResponse } from 'next/server';
+import { Order, OrderResponse } from '@/app/types/order';
 
-const orders = [
+const orders: Order[] = [
   {
-    id: "order_001",
-    date: "2024-03-01T10:00:00Z",
-    status: "completed",
+    id: 1,
     items: [
       {
         productId: 1,
         name: "スマートフォン X",
         price: 89800,
-        quantity: 1
+        quantity: 1,
+        image: "/images/Gemini_Generated_Image_7bfn17bfn17bfn17.png"
       }
     ],
+    status: "delivered",
     total: 89800,
-    shippingAddress: {
-      name: "山田 太郎",
-      postalCode: "123-4567",
-      address: "東京都渋谷区..."
-    }
+    shippingAddress: "東京都渋谷区...",
+    createdAt: "2024-03-01T10:00:00Z",
+    updatedAt: "2024-03-02T15:00:00Z"
   },
   {
-    id: "order_002",
-    date: "2024-03-15T15:30:00Z",
-    status: "shipped",
+    id: 2,
     items: [
       {
         productId: 2,
         name: "ワイヤレスイヤホン",
         price: 19800,
-        quantity: 2
+        quantity: 2,
+        image: "/images/Gemini_Generated_Image_5tyqmm5tyqmm5tyq.png"
       }
     ],
+    status: "processing",
     total: 39600,
-    shippingAddress: {
-      name: "山田 太郎",
-      postalCode: "123-4567",
-      address: "東京都渋谷区..."
-    }
+    shippingAddress: "大阪府大阪市...",
+    createdAt: "2024-03-15T14:00:00Z",
+    updatedAt: "2024-03-15T14:00:00Z"
   }
 ];
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<OrderResponse>> {
   return NextResponse.json({
     orders,
     total: orders.length,

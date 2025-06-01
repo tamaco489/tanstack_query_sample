@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { Product, ProductResponse } from '@/app/types/product';
 
-const products = [
+const products: Product[] = [
   {
     id: 1,
     name: "スマートフォン X",
@@ -30,7 +31,7 @@ const products = [
   }
 ];
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<ProductResponse>> {
   return NextResponse.json({
     products,
     total: products.length,

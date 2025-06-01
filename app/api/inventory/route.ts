@@ -1,35 +1,36 @@
 import { NextResponse } from 'next/server';
+import { InventoryItem, InventoryResponse } from '@/app/types/inventory';
 
-const inventory = [
+const inventory: InventoryItem[] = [
   {
     productId: 1,
     name: "スマートフォン X",
     currentStock: 50,
     reservedStock: 5,
     availableStock: 45,
-    lastUpdated: "2024-03-20T09:00:00Z"
+    lastUpdated: new Date().toISOString()
   },
   {
     productId: 2,
     name: "ワイヤレスイヤホン",
     currentStock: 100,
-    reservedStock: 20,
-    availableStock: 80,
-    lastUpdated: "2024-03-20T09:00:00Z"
+    reservedStock: 10,
+    availableStock: 90,
+    lastUpdated: new Date().toISOString()
   },
   {
     productId: 3,
     name: "スマートウォッチ",
     currentStock: 30,
-    reservedStock: 10,
-    availableStock: 20,
-    lastUpdated: "2024-03-20T09:00:00Z"
+    reservedStock: 3,
+    availableStock: 27,
+    lastUpdated: new Date().toISOString()
   }
 ];
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<InventoryResponse>> {
   return NextResponse.json({
-    inventory,
+    items: inventory,
     total: inventory.length,
     timestamp: new Date().toISOString()
   });
